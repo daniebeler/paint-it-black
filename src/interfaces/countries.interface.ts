@@ -1,0 +1,4 @@
+
+interface ICountries {
+    countries: string[]
+}
