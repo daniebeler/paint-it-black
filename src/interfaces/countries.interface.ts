@@ -1,4 +1,0 @@
-
-interface ICountries {
-    countries: string[]
-}

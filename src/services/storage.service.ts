@@ -1,13 +1,14 @@
+import { ISOCode } from "react-svg-worldmap"
 
 
-const storeData = (countries: ICountries) => {
-    localStorage.setItem('fief', JSON.stringify(countries))
+const storeData = (countries: ISOCode[]) => {
+    localStorage.setItem('foof', JSON.stringify(countries))
 }
 
-const getData = (): ICountries | null => {
-    const fuf = localStorage.getItem('fief')
+const getData = (): ISOCode[] => {
+    const fuf = localStorage.getItem('foof')
 
-    return fuf ? JSON.parse(fuf) as ICountries : null
+    return fuf ? JSON.parse(fuf) as ISOCode[] : []
 }
 
 const Storage = {

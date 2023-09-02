@@ -10,21 +10,16 @@ const World = () => {
   const [countryData, setCountryData] = useState<DataItem<string>[]>();
 
   useEffect(() => {
-    const lul: ICountries = {
-      countries: ["AT"],
-    };
 
-    Storage.storeData(lul);
-
-    const dataFromStorage: ICountries | null = Storage.getData();
+    const dataFromStorage: ISOCode[] | null = Storage.getData();
 
     console.log("datafromstorage", dataFromStorage);
 
     console.log("countries");
 
     if (dataFromStorage) {
-      const newData: DataItem<string>[] = dataFromStorage.countries.map(
-        (countryf: string) => {
+      const newData: DataItem<string>[] = dataFromStorage.map(
+        (countryf: ISOCode) => {
           return {
             country: countryf,
             value: "lul",
@@ -42,6 +37,13 @@ const World = () => {
     console.log("fief");
     setPopup(true);
   };
+
+  const saveCountry = (isoCode: ISOCode) => {
+    let countryList: string[] = Storage.getData()
+    countryList.indexOf(isoCode) === -1 ? countryList.push(isoCode) : console.log("mehege")
+    Storage.storeData(countryList)
+    setPopup(false)
+  }
 
   return (
     <>
@@ -65,6 +67,9 @@ const World = () => {
           <div>Do you want to paint Austria black?</div>
           <button onClick={() => setPopup(false)}>
             close
+          </button>
+          <button onClick={() => saveCountry("IT")}>
+            yes
           </button>
         </Popup>
       ) : (
