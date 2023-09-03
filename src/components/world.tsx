@@ -1,16 +1,16 @@
 "use client";
 
 import Storage from "@/services/storage.service";
-import { useEffect, useState } from "react";
-import WorldMap, { DataItem, ISOCode } from "react-svg-worldmap";
+import { useCallback, useEffect, useState } from "react";
+import WorldMap, { CountryContext, DataItem, ISOCode } from "react-svg-worldmap";
 import Popup from "./popup";
 
 const World = () => {
   const [popup, setPopup] = useState<boolean>();
-  const [countryData, setCountryData] = useState<DataItem<string>[]>();
+  const [clickedCountry, setClickedCountry] = useState<CountryContext<string>>();
+  const [countriesIsoCodes, setCountriesIsoCodes] = useState<ISOCode[]>([]);
 
   useEffect(() => {
-
     const dataFromStorage: ISOCode[] | null = Storage.getData();
 
     console.log("datafromstorage", dataFromStorage);
@@ -18,44 +18,48 @@ const World = () => {
     console.log("countries");
 
     if (dataFromStorage) {
-      const newData: DataItem<string>[] = dataFromStorage.map(
-        (countryf: ISOCode) => {
-          return {
-            country: countryf,
-            value: "lul",
-          } as DataItem<string>;
-        }
-      );
-
-      console.log(newData);
-
-      setCountryData(newData);
+      setCountriesIsoCodes(dataFromStorage);
     }
   }, []);
 
-  const countryClicked = () => {
-    console.log("fief");
+  const addValueToCountry = (isoCodes: string[]): DataItem<string>[] => {
+    const newData: DataItem<string>[] = isoCodes.map(
+      (countryf: ISOCode) => {
+        return {
+          country: countryf,
+          value: "",
+        } as DataItem<string>;
+      }
+    );
+    return newData;
+  };
+
+  const countryClicked = (country: CountryContext<string>) => {
+    console.log(country);
     setPopup(true);
+    setClickedCountry(country);
   };
 
   const saveCountry = (isoCode: ISOCode) => {
-    let countryList: string[] = Storage.getData()
-    countryList.indexOf(isoCode) === -1 ? countryList.push(isoCode) : console.log("mehege")
-    Storage.storeData(countryList)
-    setPopup(false)
-  }
+    let countryList: string[] = countriesIsoCodes;
+    countryList.indexOf(isoCode) === -1
+      ? countryList.push(isoCode)
+      : console.log("mehege");
+    Storage.storeData(countryList);
+    setPopup(false);
+  };
 
   return (
     <>
       <div className="w-screen h-screen">
-        {countryData ? (
+        {countriesIsoCodes ? (
           <WorldMap
             color="#000"
             title="Top 10 Populous Countries"
             value-suffix="people"
             size="responsive"
-            data={countryData}
-            onClickFunction={countryClicked}
+            data={addValueToCountry(countriesIsoCodes)}
+            onClickFunction={(country: CountryContext<string>) => countryClicked(country)}
           />
         ) : (
           <></>
@@ -64,13 +68,9 @@ const World = () => {
 
       {popup ? (
         <Popup>
-          <div>Do you want to paint Austria black?</div>
-          <button onClick={() => setPopup(false)}>
-            close
-          </button>
-          <button onClick={() => saveCountry("IT")}>
-            yes
-          </button>
+          <div>Do you want to paint {clickedCountry?.countryName} black?</div>
+          <button onClick={() => setPopup(false)}>close</button>
+          <button onClick={() => saveCountry(clickedCountry!.countryCode)}>yes</button>
         </Popup>
       ) : (
         <></>
