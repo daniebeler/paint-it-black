@@ -6,7 +6,8 @@ import WorldMap, { CountryContext, DataItem, ISOCode } from "react-svg-worldmap"
 import Popup from "./popup";
 
 const World = () => {
-  const [popup, setPopup] = useState<boolean>();
+  const [addPopup, setAddPopup] = useState<boolean>();
+  const [removePopup, setRemovePopup] = useState<boolean>();
   const [clickedCountry, setClickedCountry] = useState<CountryContext<string>>();
   const [countriesIsoCodes, setCountriesIsoCodes] = useState<ISOCode[]>([]);
 
@@ -36,18 +37,32 @@ const World = () => {
 
   const countryClicked = (country: CountryContext<string>) => {
     console.log(country);
-    setPopup(true);
-    setClickedCountry(country);
+    if (countriesIsoCodes.indexOf(country.countryCode) === -1) {
+      setAddPopup(true);
+      setClickedCountry(country);
+    }else {
+     setRemovePopup(true);
+     setClickedCountry(country);
+    }
+    
   };
 
   const saveCountry = (isoCode: ISOCode) => {
     let countryList: string[] = countriesIsoCodes;
-    countryList.indexOf(isoCode) === -1
-      ? countryList.push(isoCode)
-      : console.log("mehege");
+    countryList.push(isoCode)
     Storage.storeData(countryList);
-    setPopup(false);
+    setCountriesIsoCodes(countryList);
+    setAddPopup(false);
   };
+
+  const removeCountry = (isoCode: ISOCode) => {
+    console.log(isoCode);
+    let countryList: string[] = countriesIsoCodes;
+    countryList = countryList.filter((country: string) => country !== isoCode)
+    Storage.storeData(countryList);
+    setCountriesIsoCodes(countryList);
+    setRemovePopup(false);
+  }
 
   return (
     <>
@@ -66,11 +81,20 @@ const World = () => {
         )}
       </div>
 
-      {popup ? (
+      {addPopup ? (
         <Popup>
           <div>Do you want to paint {clickedCountry?.countryName} black?</div>
-          <button onClick={() => setPopup(false)}>close</button>
+          <button onClick={() => setAddPopup(false)}>close</button>
           <button onClick={() => saveCountry(clickedCountry!.countryCode)}>yes</button>
+        </Popup>
+      ) : (
+        <></>
+      )}
+      {removePopup ? (
+        <Popup>
+          <div>Do you want to remove {clickedCountry?.countryName}</div>
+          <button onClick={() => setRemovePopup(false)}>close</button>
+          <button className="bg-red-500" onClick={() => removeCountry(clickedCountry!.countryCode)}>yes</button>
         </Popup>
       ) : (
         <></>
