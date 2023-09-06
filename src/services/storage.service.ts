@@ -1,14 +1,11 @@
-import { ISOCode } from "react-svg-worldmap"
-
-
-const storeData = (countries: ISOCode[]) => {
-    localStorage.setItem('foof', JSON.stringify(countries))
+const storeData = (countries: string[]) => {
+    localStorage.setItem('fooff', JSON.stringify(countries))
 }
 
-const getData = (): ISOCode[] => {
-    const fuf = localStorage.getItem('foof')
-
-    return fuf ? JSON.parse(fuf) as ISOCode[] : []
+const getData = (): string[] => {
+    const fuf = localStorage.getItem('fooff')
+    console.log(fuf)
+    return fuf ? JSON.parse(fuf) as string[] : []
 }
 
 const Storage = {
