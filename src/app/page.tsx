@@ -1,3 +1,4 @@
+import Friends from '@/components/friends'
 import World from '@/components/world'
 
 export default function Home() {
@@ -7,6 +8,7 @@ export default function Home() {
         Paint it black
       </h1>
      <World />
+     <Friends />
     </main>
   )
 }

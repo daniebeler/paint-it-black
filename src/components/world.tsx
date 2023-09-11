@@ -13,6 +13,44 @@ const World = () => {
 
   const [countries, setCountries] = useState({ features: [] });
 
+  const arcs = [
+    {
+      startLat: 40.63980103,
+      startLng: -73.77890015,
+      endLat: 50.033333,
+      endLng: 8.570556,
+      color: 'red'
+    },
+    {
+      startLat: 47.464699,
+      startLng: 8.54917,
+      endLat: 51.4706,
+      endLng: -0.461941,
+      color: 'red'
+    },
+    {
+      startLat: 47.464699,
+      startLng: 8.54917,
+      endLat: 45.5175018311,
+      endLng: -73.4169006348,
+      color: 'red'
+    },
+    {
+      startLat: 47.464699,
+      startLng: 8.54917,
+      endLat: 41.8002778,
+      endLng: 12.2388889,
+      color: 'red'
+    },
+    {
+      startLat: 41.8002778,
+      startLng: 12.2388889,
+      endLat: 47.464699,
+      endLng: 8.54917,
+      color: 'red'
+    }
+  ]
+
   useEffect(() => {
     const dataFromStorage: string[] | null = Storage.getData();
 
@@ -29,19 +67,9 @@ const World = () => {
       .then(setCountries);
   }, []);
 
-  const countryClicked = (country: any, lat: any) => () => {
-    //iso1A2Code([-4.5, 54.2]);
-    console.log("fief");
-    if (countriesIsoCodes.indexOf(country) === -1) {
-      setAddPopup(true);
-      setClickedCountry(country);
-    } else {
-      setRemovePopup(true);
-      setClickedCountry(country);
-    }
-  };
 
-  const emitArc = useCallback(
+
+  const countryClicked = useCallback(
     (poly, event, { lat: endLat, lng: endLng }) => {
       console.log(poly);
       console.log(countriesIsoCodes);
@@ -77,17 +105,23 @@ const World = () => {
     <>
       <div>
         <Globe
-          backgroundColor="white"
-          globeImageUrl="//unpkg.com/three-globe/example/img/earth-day.jpg"
+          backgroundColor="#a9def9"
+          globeImageUrl="/bg.png"
           showGlobe={true}
-          showAtmosphere={false}
+          showAtmosphere={true}
           polygonsData={countries.features}
           polygonCapColor={(d: any) =>
             countriesIsoCodes.includes(d.properties.ISO_A3) ? "black" : "white"
           }
           polygonSideColor={() => "rgba(0, 0, 0, 0)"}
-          polygonStrokeColor={() => "red"}
-          onPolygonClick={emitArc}
+          polygonAltitude={0.01}
+          polygonStrokeColor={() => "#283618"}
+          onPolygonClick={countryClicked}
+          arcsData={arcs}
+          arcColor={['#ffb703', '#ffb703']}
+          arcDashLength={0.5}
+          arcDashGap={1}
+          arcDashAnimateTime={() => Math.random() * 4000 + 500}
         />
       </div>
 
